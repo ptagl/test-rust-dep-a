@@ -1,0 +1,8 @@
+[package]
+name = "test-rust-dep-a"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# An outdated dependency useful to test dependabot
+log = "0.3.9"
