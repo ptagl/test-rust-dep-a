@@ -1,0 +1,23 @@
+name: Notify New Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  notify-dependents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Repository B Update
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TEST_RUST_DEP_B_PRIVATE_KEY }}
+          repository: ptagl/test-rust-dep-b
+          event-type: dependency-update
+          client-payload: |
+            {
+              "dependency": "repository-a",
+              "version": "${{ github.ref_name }}",
+              "sha": "${{ github.sha }}"
+            }
