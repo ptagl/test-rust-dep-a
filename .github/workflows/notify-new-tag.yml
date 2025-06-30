@@ -6,18 +6,24 @@ on:
       - 'v*'
 
 jobs:
-  notify-dependents:
+  notify-dependent-repositories:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.DEP_UPDATE_APP_ID }}
+          private_key: ${{ secrets.DEP_UPDATE_APP_PRIVATE_KEY }}
+
       - name: Trigger Repository B Update
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.TEST_RUST_DEP_B_PRIVATE_KEY }}
+          token: ${{ steps.generate_token.outputs.token }}
           repository: ptagl/test-rust-dep-b
           event-type: dependency-update
           client-payload: |
             {
-              "dependency": "repository-a",
-              "version": "${{ github.ref_name }}",
-              "sha": "${{ github.sha }}"
+              "dependency": "test-rust-dep-a",
+              "version": "${{ github.ref_name }}"
             }
